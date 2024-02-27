@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+
+ app:
+   build:
+     context: ./
+     dockerfile: ./app/Dockerfile
+   container_name: app
+   hostname: app
+   restart: always
+   volumes:
+     - ./src/:/usr/src/app/
+   depends_on:
+     - server
+   env_file:
+     - ./app/environment.env
+   networks:
+     django_net:
+       ipv4_address: 10.20.30.1
+
+ server:
+   build:
+     context: ./
+     dockerfile: ./server/Dockerfile
+   container_name: server
+   hostname: server
+   restart: always
+   env_file:
+     - ./server/environment.env
+   ports:
+     - 8080:8080
+   networks:
+     django_net:
+       ipv4_address: 10.20.30.2
+
+networks:
+
+ django_net:
+   ipam:
+     config:
+       - subnet: 10.20.30.0/24
+         gateway: 10.20.30.254
