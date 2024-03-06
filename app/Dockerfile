@@ -8,8 +8,10 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 COPY ./app/requirements.txt .
 RUN pip install -r requirements.txt
+COPY ./app/entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
 # copy project
 COPY ./app/src/ticmagicalline .
 
-CMD ["gunicorn", "ticmagicalline.wsgi:application", "--bind", "0.0.0.0:8081"]
+ENTRYPOINT [ "/entrypoint.sh" ]

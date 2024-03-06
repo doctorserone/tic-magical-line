@@ -1,3 +1,5 @@
 Django
 gunicorn
 psycopg2-binary
+django-createsuperuserwithpassword
+pretty_errors
