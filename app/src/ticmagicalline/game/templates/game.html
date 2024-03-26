@@ -26,7 +26,7 @@
             <a href="#" data-target="mobile-sidebar" class="sidenav-trigger black white-text"><i class="material-icons">menu</i></a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a href="/"><i class="material-icons left">home</i>Start</a></li>
-                <li class="active"><a class="lime-text text-lighten-1" href="/game"><i class="material-icons left lime-text text-lighten-1">apps</i>Game</a></li>
+                <li class="active"><a class="lime-text text-lighten-1" href="/play/{{ id }}"><i class="material-icons left lime-text text-lighten-1">apps</i>Game</a></li>
                 <li><a href="/logout"><i class="material-icons left">close</i>Logout {{ user.username }}</a></li>
             </ul>
         </div>
@@ -38,7 +38,7 @@
         </li>
 
         <li><a href="/"><i class="material-icons left">home</i>Start</a></li>
-        <li class="active"><a class="lime-text text-lighten-1" href="/game"><i class="material-icons left lime-text text-lighten-1">apps</i>Game</a></li>
+        <li class="active"><a class="lime-text text-lighten-1" href="/play/{{ id }}"><i class="material-icons left lime-text text-lighten-1">apps</i>Game</a></li>
         <li><a href="/logout"><i class="material-icons left">close</i>Logout {{ user.username }}</a></li>
     </ul>
 
@@ -47,25 +47,77 @@
     <div id="content">
         <div class="row">
             
+            <div class="top-game-message">{{ currentStatus }}</div>
+
             <div class="col s12 m8 l9">
-                <img src="/static/ticmagicalline/img/board.png" alt="Game board" style="width: 100%;" usemap="#boardMap">
+                <div class="board-square">
+                    {% if ommitPlayAction == 0 %}
+
+                        <div class="board-inner-square" onclick="play({{ id }}, 0);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"0:1" }}.png" /></div>
+                        <div class="board-inner-square" onclick="play({{ id }}, 1);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"1:2" }}.png" /></div>
+                        <div class="board-inner-square" onclick="play({{ id }}, 2);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"2:3" }}.png" /></div>
+                        <div style="clear: both; height: 0;"></div>
+                        <div class="board-inner-square" onclick="play({{ id }}, 3);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"3:4" }}.png" /></div>
+                        <div class="board-inner-square" onclick="play({{ id }}, 4);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"4:5" }}.png" /></div>
+                        <div class="board-inner-square" onclick="play({{ id }}, 5);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"5:6" }}.png" /></div>
+                        <div style="clear: both; height: 0;"></div>
+                        <div class="board-inner-square" onclick="play({{ id }}, 6);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"6:7" }}.png" /></div>
+                        <div class="board-inner-square" onclick="play({{ id }}, 7);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"7:8" }}.png" /></div>
+                        <div class="board-inner-square" onclick="play({{ id }}, 8);"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"8:"   }}.png" /></div>
+                        <div style="clear: both; height: 0;"></div>
+
+                    {% else %}
+
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"0:1" }}.png" /></div>
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"1:2" }}.png" /></div>
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"2:3" }}.png" /></div>
+                        <div style="clear: both; height: 0;"></div>
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"3:4" }}.png" /></div>
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"4:5" }}.png" /></div>
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"5:6" }}.png" /></div>
+                        <div style="clear: both; height: 0;"></div>
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"6:7" }}.png" /></div>
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"7:8" }}.png" /></div>
+                        <div class="board-inner-square default-cursor"><img src="/static/ticmagicalline/img/tile{{ game.board | slice:"8:"   }}.png" /></div>
+                        <div style="clear: both; height: 0;"></div>
+                        
+                    {% endif %}
+                </div>
             </div>
     
             <div class="col s12 m4 l3">
 
                 <h2>Game info</h2>
-                <p>
-                    ...
-                </p>
+                <ul>
+                    <li><b>Player O: </b>  {% if game.user_o %} {{ game.user_o.username }} {% else %} <i>Nobody yet...</i> {% endif %}</li>
+                    <li><b>Player X: </b> {{ game.user_x.username }}</li>
+                    <li><b>Creation: </b> {{ game.creation | date:'d-m-Y H:i:s' }}</li>
+                    <li><b>Last move: </b> {{ game.last_move | date:'d-m-Y H:i:s' }}</li>
+                </ul>
         
-                <h2>Movements</h2>
-                <p>
-                    ...<br/>
-                    ...<br/>
-                    ...<br/>
-                    ...<br/>
-                    ...
-                </p>
+                <h2>Latest movements:</h2>
+
+                <ul>
+                {% for movement in movements %}
+
+                    {% if movement.symbol == 'C' %}
+                        <li><b>{{ movement.date | date:'d-m-Y H:i:s' }}:</b> The user <b>{{ movement.user.username }}</b> has created the game</li>
+                    {% elif movement.symbol == 'J' %}
+                        <li><b>{{ movement.date | date:'d-m-Y H:i:s' }}:</b> The user <b>{{ movement.user.username }}</b> has joined to the game</li>
+                    {% elif movement.symbol == 'X' %}
+                        <li><b>{{ movement.date | date:'d-m-Y H:i:s' }}:</b> The user <b>{{ movement.user.username }}</b> has played a X on position {{ movement.movement }}</li>
+                    {% elif movement.symbol == 'O' %}
+                        <li><b>{{ movement.date | date:'d-m-Y H:i:s' }}:</b> The user <b>{{ movement.user.username }}</b> has played a O on position {{ movement.movement }}</li>
+                    {% else %}
+                        <li><b>{{ movement.date | date:'d-m-Y H:i:s' }}:</b> The user <b>{{ movement.user.username }}</b> has make an unsupported movement ({{ movement.symbol }})?</li>
+                    {% endif %}
+
+                {% empty %}
+
+                    <li>There are no movements...</li>
+
+                {% endfor %}
+                </ul>
         
             </div>
 

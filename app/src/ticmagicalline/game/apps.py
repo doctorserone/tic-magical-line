@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-import pretty_errors
 
 
 class GameConfig(AppConfig):

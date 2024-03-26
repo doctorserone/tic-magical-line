@@ -37,7 +37,7 @@
         </div>
     </nav>
 
-    <ul class="sidenav blue-grey darken-3 white-text" id="mobile-sidebar">
+    <ul class="sidenav teal darken-3 white-text" id="mobile-sidebar">
         <li style="margin: 0;">
             <img src="/static/ticmagicalline/img/mainDragonSmall.png" alt="Main Dragon" style="width: 100%;" />
         </li>
@@ -60,13 +60,13 @@
         <div class="row">
             <div class="col s12 m6">
         
-                <div class="card blue-grey darken-3">
+                <div class="card teal darken-3">
                     <div class="card-content white-text center-align">
         
                         <span class="card-title">New PvP game</span>
                         <p>Battle against other adventurers.</p>
         
-                        <form method="post" action="/game/create">
+                        <form method="post" action="/create">
                             <input type="hidden" name="type" value="pvp" />
                             {% csrf_token %}
 
@@ -84,13 +84,13 @@
         
             <div class="col s12 m6">
 
-                <div class="card blue-grey darken-3">
+                <div class="card teal darken-3">
                     <div class="card-content white-text center-align">
         
                         <span class="card-title">New PvE game</span>
-                        <p>Battle against the dragon.</p>
+                        <p>Battle against the dragons.</p>
         
-                        <form method="post" action="/game/create">
+                        <form method="post" action="/create">
                             <input type="hidden" name="type" value="pve" />
                             {% csrf_token %}
 
@@ -108,31 +108,111 @@
         </div>
         
         <div class="row">
-            <div class="col s12 m6">
+            <div class="col s12">
         
                 <h2>My active games</h2>
     
-                {% for game in myGames.all %}
-                    <p>
-                        {{ game.id }} {{ game.user_o }} {{ game.user_x }} {{ game.board }} {{ game.creation }} {{ game.last_move }} {{ game.winner }}
-                    </p>
+                <div class="row">
+                {% for game in myGames %}
+
+                    <div class="col s12 m6 l3">
+                        <div class="card teal darken-4">
+                            <div class="card-content white-text center-align">
+        
+                                <p class="truncate">
+                                    {% if game.user_x == None %}
+                                        Waiting for opponent...
+                                    {% else %}
+                                        Game against <b>{{ game.user_o.username }}</b>
+                                    {% endif %}
+                                </p>
+
+                                <a class="btn waves-effect waves-light light-green darken-3 white-text" href="/play/{{ game.id }}">
+                                    <i class="material-icons left">send</i> Play
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+
                 {% empty %}
-                    <p>
-                        Yo have no active games at this moment. Create one with the buttons above.
-                    </p>
+
+                    <div class="col s12">
+                        You have no active games at this moment. Create one with the buttons above.
+                    </div>
+
                 {% endfor %}
+                </div>
 
                 <h2>Games waiting for opponent</h2>
 
-                {% for game in openedGames.all %}
-                    <p>
-                        {{ game.id }} {{ game.user_o }} {{ game.user_x }} {{ game.board }} {{ game.creation }} {{ game.last_move }} {{ game.winner }}
-                    </p>
+                <div class="row">
+                {% for game in openedGames %}
+
+                    <div class="col s12 m6 l3">
+                        <div class="card teal darken-4">
+                            <div class="card-content white-text center-align">
+        
+                                <p class="truncate">
+                                    Game created by <b>{{ game.user_o.username }} </b>
+                                </p>
+                                
+                                <a class="btn waves-effect waves-light light-green darken-3 white-text" href="/join/{{ game.id }}">
+                                    <i class="material-icons left">verified_user</i> Join
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+
                 {% empty %}
-                    <p>
+
+                    <div class="col s12">
                         There are no opened games at this moment. Create one with the buttons above.
-                    </p>
+                    </div>
+
                 {% endfor %}
+                </div>
+
+                <h2>Finalized games</h2>
+    
+                <div class="row">
+                {% for game in finalizedGames %}
+
+                    <div class="col s12 m6 l3">
+                        <div class="card teal darken-4">
+                            <div class="card-content white-text center-align">
+        
+                                <p class="truncate">
+                                    <b>{{ game.user_o.username }}</b> vs <b>{{ game.user_x.username }}</b>
+                                </p>
+
+                                <p class="truncate">
+                                    {% if game.winner == 'O'%}
+                                        Winner was {{ game.user_o.username }}
+                                    {% elif game.winner == 'X' %}
+                                        Winner was {{ game.user_x.username }}
+                                    {% else %}
+                                        The game ended as draw
+                                    {% endif %}
+                                </p>
+
+                                <a class="btn waves-effect waves-light light-green darken-3 white-text" href="/play/{{ game.id }}">
+                                    <i class="material-icons left">send</i> View
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+
+                {% empty %}
+
+                    <div class="col s12">
+                        You have no finalized games at this moment. Create one with the buttons above.
+                    </div>
+
+                {% endfor %}
+                </div>
 
             </div>
         </div>
@@ -143,7 +223,7 @@
             <div class="row">
                 <div class="col s12 m4 l3">
             
-                    <div class="card blue-grey darken-3">
+                    <div class="card teal darken-3">
                         <div class="card-content white-text center-align">
             
                             <span class="card-title">Enter and play</span>

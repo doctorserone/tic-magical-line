@@ -38,7 +38,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_createsuperuserwithpassword",
+    "django_crontab",
     "game",
+]
+
+CRONJOBS = [
+    ('* * * * *', 'game.cron.do_ia_movements', '>> /cron/movements.log 2>&1'),
+    ('0 * * * *', 'django.core.management.call_command', [ 'clearsessions' ]),
 ]
 
 MIDDLEWARE = [

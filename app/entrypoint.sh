@@ -6,6 +6,9 @@ python manage.py makemigrations
 echo "Executing Django DB migration..."
 python manage.py migrate
 
+echo "Adding Django scheduled tasks..."
+python manage.py crontab add
+
 echo "Creating Django administrator..."
 python manage.py createsuperuserwithpassword \
     --username $DJANGO_ADMIN_USERNAME \
