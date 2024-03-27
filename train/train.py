@@ -2,9 +2,10 @@ import numpy as np
 from tensorflow.keras.models import load_model
 import os
 import random
+import sys
 
-from src.agent import QLearningAgent
-from src.tictactoe import TicTacToe
+from agent import QLearningAgent
+from tictactoe import TicTacToe
 
 # -------------------------------------------------------------------------------------------
 
@@ -88,20 +89,27 @@ def playGame(prefix, agent, opponent):
 
 # -------------------------------------------------------------------------------------------
 
+# Reopen the trained model if available
 agent = QLearningAgent()
-if os.path.exists('trained_model.keras'):
-    agent.model = load_model('trained_model.keras')
+if os.path.exists('dragon.keras'):
+    agent.model = load_model('dragon.keras')
 
-opponent = QLearningAgent(exploration_rate=1.0)  # The opponent is more exploratory and always chooses random actions
+# The opponent is more exploratory and always chooses random actions (exploration_rate=1.0)
+opponent = QLearningAgent(exploration_rate=1.0)  
 
-numberOfGames = 100
+# We can optionally set the number of games from command line
+try:
+    numberOfGames = int(sys.argv[1])
+except:
+    numberOfGames = 10
+
+# Play each ga,e
 for numGame in range(numberOfGames):
     prefix = f"{numGame+1}/{numberOfGames}"
 
-    # Play each game
     print(f"Playing game {prefix}...")
     playGame(prefix, agent, opponent)
     print()
 
-    # Save after every play, to allow cancel the script at any time
-    agent.model.save('trained_model.keras')
+# Save the trained model
+agent.model.save('dragon.keras')

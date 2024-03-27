@@ -59,8 +59,8 @@ def playerPlay(game, symbol):
 # -------------------------------------------------------------------------------------------
 
 agent = QLearningAgent()
-if os.path.exists('trained_model.keras'):
-    agent.model = load_model('trained_model.keras')
+if os.path.exists('dragon.keras'):
+    agent.model = load_model('dragon.keras')
 
 emptyBoard = "EEEEEEEEE"
 game = TicTacToe(emptyBoard)
@@ -108,4 +108,4 @@ if agentIsO:
 else:
     print(f'Game over! Winner: {"Player" if game.winner == "O" else "Dragon"} ({game.winner})')
 
-agent.model.save('trained_model.keras')
+agent.model.save('dragon.keras')
