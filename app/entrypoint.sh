@@ -8,6 +8,8 @@ python manage.py migrate
 
 echo "Adding Django scheduled tasks..."
 python manage.py crontab add
+crontab -l
+service cron restart
 
 echo "Creating Django administrator..."
 python manage.py createsuperuserwithpassword \

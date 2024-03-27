@@ -11,14 +11,14 @@ def do_ia_movements():
     ai = getDragonAI()
 
     # Get unfinished IA games
-    pendingIaGames = Game.objects.filter(Q(user_x=ai) | Q(user_y=ai), Q(winner='')).order_by("-date")
+    pendingIaGames = Game.objects.filter(Q(user_o=ai) | Q(user_x=ai), Q(winner='')).order_by("-creation")
 
     for game in pendingIaGames:
         lastMovement = GameMovement.objects.filter(Q(game=game)).order_by("-date").first()
         tictactoe = TicTacToe(game.board)
 
         if lastMovement.user != ai:
-            print(f"Making dragon move on game agains {game.user_o}, created on {game.creation}...")
+            print(f"Making dragon move on game against {game.user_o}, created on {game.creation}...")
             dragon = DragonPlay(game.board)
 
             position =- 1

@@ -16,6 +16,7 @@ RUN chmod +x entrypoint.sh
 
 # Execute cron service after migration
 RUN mkdir /cron
+RUN touch /cron/movements.log
 RUN service cron restart
 
 # copy project
