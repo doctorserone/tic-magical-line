@@ -1,5 +1,6 @@
 import numpy as np
 from tensorflow.keras.models import load_model
+import tensorflow
 import os
 import random
 import sys
@@ -32,10 +33,6 @@ def agentPlay(prefix, name, game, agent, symbol):
         validMove = game.makeMove(symbol, position)
         if validMove:
             print(f"{prefix} > {name}: Plays {symbol} at position {position} | State: {game.board}")
-            game.dumpBoard()
-
-        else:
-            print(f"{prefix} > {name}: Invalid move at position {position}! | State: {game.board}")
 
     return game.checkGameOver()
 
@@ -82,10 +79,10 @@ def playGame(prefix, agent, opponent):
                 break
 
         # If no one wins, give a reward of 0
-        print(f"{prefix} > Nobody wins in this turn, play another one. Agent's reward is: 0")
         agent.step(boardToState(game.board), 0)
 
     print(f'{prefix} > Game over! Winner: {game.winner}')
+    game.dumpBoard()
 
     if (agentIsO and game.winner == 'O') or (not agentIsO and game.winner == 'X'):
         return 1
@@ -101,14 +98,18 @@ agent = QLearningAgent()
 if os.path.exists('dragon.keras'):
     agent.model = load_model('dragon.keras')
 
-# The opponent is more exploratory and always chooses random actions (exploration_rate=1.0)
-opponent = QLearningAgent(exploration_rate=1.0)  
+# The opponent muest be more exploratory; set yo 1.o to always choose random actions
+# exploration_rate goes from 0.0 to 1.0)
+opponent = QLearningAgent(exploration_rate=0.8)  
 
 # We can optionally set the number of games from command line
 try:
     numberOfGames = int(sys.argv[1])
 except:
     numberOfGames = 10
+
+# Uncomment to disable keras training messages
+tensorflow.keras.utils.disable_interactive_logging()
 
 # Play each game
 wins = 0
@@ -130,11 +131,9 @@ for numGame in range(numberOfGames):
 
     print(f'{prefix} > Training result until now: {wins} wins, {loses} loses, {draws} draws')
     print()
-    print()
 
 # Save the trained model
 print(f'Final training result: {wins} wins, {loses} loses, {draws} draws')
 agent.model.save('dragon.keras')
 
-print()
 print()
