@@ -87,6 +87,13 @@ def playGame(prefix, agent, opponent):
 
     print(f'{prefix} > Game over! Winner: {game.winner}')
 
+    if (agentIsO and game.winner == 'O') or (not agentIsO and game.winner == 'X'):
+        return 1
+    elif game.winner == 'D':
+        return 0
+    else:
+        return -1
+
 # -------------------------------------------------------------------------------------------
 
 # Reopen the trained model if available
@@ -103,13 +110,31 @@ try:
 except:
     numberOfGames = 10
 
-# Play each ga,e
+# Play each game
+wins = 0
+draws = 0
+loses = 0
+
 for numGame in range(numberOfGames):
     prefix = f"{numGame+1}/{numberOfGames}"
 
     print(f"Playing game {prefix}...")
-    playGame(prefix, agent, opponent)
+    result = playGame(prefix, agent, opponent)
+
+    if result == 1:
+        wins += 1
+    elif result == 0:
+        draws += 1
+    else:
+        loses += 1
+
+    print(f'{prefix} > Training result until now: {wins} wins, {loses} loses, {draws} draws')
+    print()
     print()
 
 # Save the trained model
+print(f'Final training result: {wins} wins, {loses} loses, {draws} draws')
 agent.model.save('dragon.keras')
+
+print()
+print()
